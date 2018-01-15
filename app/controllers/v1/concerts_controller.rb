@@ -1,16 +1,6 @@
 class V1::ConcertsController < ApplicationController
   def index
-    concerts_array = []
-    Concert.all.each do |concert|
-      concerts_array << {
-        id: concert.id,
-        name: concert.name,
-        date: concert.date,
-        duration: concert.duration,
-        cost: concert.cost.to_f,
-      }
-    end
-      render json: concerts_array.as_json
+    render json: Concert.all.as_json
   end
 
   def show
@@ -32,6 +22,15 @@ class V1::ConcertsController < ApplicationController
       p '-' * 100
       p concert.errors
       p concert.errors.full_messages
+      render json: { error: concert.errors.full_messages }
+    end
+  end
+
+  def destroy
+    concert = Concert.find(params[:id]).destroy
+    if concert
+      render json: { message: "#{concert.name} concert deleted" }
+    else
       render json: { error: concert.errors.full_messages }
     end
   end
